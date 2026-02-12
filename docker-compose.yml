@@ -1,0 +1,18 @@
+services:
+  ekacare-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - EkaCare__ClientId=${EKACARE_CLIENT_ID}
+      - EkaCare__ClientSecret=${EKACARE_CLIENT_SECRET}
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
