@@ -8,7 +8,11 @@ A comprehensive .NET SDK for the EkaCare Medical Transcription API, supporting a
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
 - [Running Locally](#running-locally)
+  - [EkaCare.ConsoleExample](#method-1-ekacareconsolexample---command-line-application)
+  - [EkaCare.WebApi](#method-2-ekacarewebapi---rest-api-service)
+  - [Visual Studio](#method-3-visual-studio)
 - [Running Online](#running-online)
 - [API Reference](#api-reference)
 - [Examples](#examples)
@@ -80,7 +84,11 @@ dotnet add reference path/to/EkaCare.SDK/EkaCare.SDK.csproj
 
 ## 🎯 Quick Start
 
-### Console Application
+This SDK provides **three** ways to get started:
+
+### 1. Using the SDK Directly in Your Code
+
+Integrate the SDK directly into your .NET application:
 
 ```csharp
 using EkaCare.SDK;
@@ -117,25 +125,191 @@ await client.Transcription.InitializeTransactionAsync(presignedUrl.TxnId, reques
 var status = await client.Transcription.PollForCompletionAsync(presignedUrl.TxnId);
 ```
 
+### 2. Using EkaCare.ConsoleExample
+
+A ready-to-run console application that demonstrates the complete workflow:
+
+```bash
+cd EkaCare.ConsoleExample
+# Update CLIENT_ID and CLIENT_SECRET in Program.cs
+dotnet run
+```
+
+**Perfect for:**
+- Learning how the SDK works
+- Batch processing audio files
+- Debugging and testing
+- Command-line automation
+
+### 3. Using EkaCare.WebApi
+
+A REST API service with Swagger UI for web integration:
+
+```bash
+cd EkaCare.WebApi
+# Update ClientId and ClientSecret in appsettings.json
+dotnet run
+# Open http://localhost:5000 for test page
+# Open http://localhost:5000/swagger for API docs
+```
+
+**Perfect for:**
+- Web application integration
+- Mobile app backends
+- Microservices architecture
+- API-first development
+
+### Which One Should I Use?
+
+| Scenario | Recommended Approach |
+|----------|---------------------|
+| Learning the SDK | **EkaCare.ConsoleExample** |
+| Building a .NET desktop app | **SDK directly** |
+| Building a web/mobile backend | **EkaCare.WebApi** |
+| Quick testing & debugging | **EkaCare.ConsoleExample** |
+| REST API integration | **EkaCare.WebApi** |
+| Batch processing scripts | **EkaCare.ConsoleExample** |
+| Microservices | **EkaCare.WebApi** |
+
+## 📁 Project Structure
+
+This repository contains three main components:
+
+### 1. EkaCare.SDK (Core Library)
+
+The foundational SDK that provides all the functionality for interacting with the EkaCare API.
+
+**Location:** `EkaCare.SDK/`
+
+**Key Components:**
+- `EkaCareClient.cs` - Main client for SDK initialization
+- `AuthClient.cs` - OAuth2 authentication and token management
+- `FileClient.cs` - File upload and presigned URL operations
+- `TranscriptionClient.cs` - Transcription initialization, status checking, and polling
+- `Models/` - Request and response models
+
+**Usage:**
+```csharp
+// Reference in your .csproj
+<ProjectReference Include="../EkaCare.SDK/EkaCare.SDK.csproj" />
+
+// Use in your code
+using EkaCare.SDK;
+var client = new EkaCareClient(clientId, clientSecret);
+```
+
+### 2. EkaCare.ConsoleExample (Console Application)
+
+A complete command-line application demonstrating the full transcription workflow.
+
+**Location:** `EkaCare.ConsoleExample/`
+
+**What It Contains:**
+- `Program.cs` - Complete end-to-end transcription example
+- Step-by-step execution with detailed console output
+- Example configurations for different use cases
+- Error handling and result decoding
+
+**When to Use:**
+- ✅ Learning how the SDK works
+- ✅ Testing with your audio files
+- ✅ Batch processing multiple files
+- ✅ Creating automation scripts
+- ✅ Debugging transcription issues
+- ✅ Quick prototyping
+
+**Key Features:**
+- Detailed logging at each step
+- Configurable templates and languages
+- Automatic Base64 decoding
+- JSON result formatting
+- Token refresh example (commented)
+
+### 3. EkaCare.WebApi (REST API Service)
+
+A production-ready ASP.NET Core Web API exposing the SDK functionality through REST endpoints.
+
+**Location:** `EkaCare.WebApi/`
+
+**What It Contains:**
+- `Program.cs` - API configuration and startup
+- `Controllers/TranscriptionController.cs` - REST API endpoints
+- `appsettings.json` - Configuration file
+- `wwwroot/test-workflow.html` - Interactive test page
+- Swagger UI for API documentation
+
+**Available Endpoints:**
+- Authentication (`/api/transcription/authenticate`)
+- File operations (`/api/transcription/presigned-url`, `/upload-file`)
+- Transcription (`/api/transcription/initialize`, `/status`, `/poll`)
+- Complete workflow (`/api/transcription/complete-workflow`)
+
+**When to Use:**
+- ✅ Building web applications
+- ✅ Mobile app backends (iOS, Android, React Native)
+- ✅ Integrating with non-.NET systems
+- ✅ Microservices architecture
+- ✅ API-first development
+- ✅ Multi-language client support
+
+**Key Features:**
+- RESTful API design
+- Swagger/OpenAPI documentation
+- CORS enabled for web integration
+- Support for both configured and runtime credentials
+- Automatic result decoding
+- Interactive test page
+
+### Project Dependencies
+
+```
+EkaCare.ConsoleExample
+  └─ depends on → EkaCare.SDK
+
+EkaCare.WebApi
+  └─ depends on → EkaCare.SDK
+
+EkaCare.SDK
+  └─ standalone (no internal dependencies)
+```
+
 ## 🏃 Running Locally
 
-### Method 1: Console Application
+### Method 1: EkaCare.ConsoleExample - Command Line Application
+
+The console application is a fully-featured example demonstrating the complete transcription workflow step-by-step. It's perfect for learning how the SDK works and for batch processing tasks.
+
+#### Features:
+- Step-by-step execution with detailed logging
+- Authentication with token management
+- File upload to S3
+- Transcription initialization
+- Automatic status polling
+- Base64 result decoding and JSON formatting
+
+#### Setup and Usage:
 
 1. **Navigate to Console Example:**
    ```bash
-   cd EkaCare.Solution/EkaCare.ConsoleExample
+   cd EkaCare.ConsoleExample
    ```
 
-2. **Update Configuration:**
-   Edit `Program.cs` and update:
+2. **Configure Credentials:**
+   
+   Edit `Program.cs` lines 12-18 and update the following constants:
+   
    ```csharp
    private const string CLIENT_ID = "your_actual_client_id";
    private const string CLIENT_SECRET = "your_actual_client_secret";
+   
    private static readonly List<string> AUDIO_FILE_PATHS = new()
    {
        @"C:\path\to\your\audio1.wav",
-       @"C:\path\to\your\audio2.mp3"
+       @"/Users/username/audio2.mp3"  // Cross-platform paths supported
    };
+   
+   private const string TEMPLATE_ID = "transcript_template";
+   // Available templates: "transcript_template", "eka_emr_template", "clinical_notes_template"
    ```
 
 3. **Run the Application:**
@@ -143,17 +317,122 @@ var status = await client.Transcription.PollForCompletionAsync(presignedUrl.TxnI
    dotnet run
    ```
 
-### Method 2: Web API
+#### What It Does:
+
+The console application performs these steps automatically:
+
+1. **Authentication** - Logs in and obtains access token
+2. **Get Presigned URL** - Retrieves S3 upload URL and transaction ID
+3. **Upload Files** - Uploads audio files to S3 using presigned URL
+4. **Initialize Transcription** - Starts the transcription job with your configuration
+5. **Poll for Results** - Waits for completion and displays decoded results
+
+#### Customization Options:
+
+You can customize the transcription by modifying the `TransactionInitRequest` in lines 120-143:
+
+```csharp
+var request = new TransactionInitRequest
+{
+    Mode = "dictation",              // or "consultation"
+    Transfer = "non-vaded",          // or "vaded"
+    ModelType = "pro",               // or "lite"
+    InputLanguage = new List<string> { "en-IN", "hi" }, // Multiple languages
+    OutputLanguage = "en-IN",
+    Speciality = "general_medicine", // or "cardiology", "orthopedics", etc.
+    OutputFormatTemplate = new List<OutputFormatTemplate>
+    {
+        new OutputFormatTemplate
+        {
+            TemplateId = TEMPLATE_ID,
+            CodificationNeeded = false
+        }
+    },
+    AdditionalData = new Dictionary<string, object>
+    {
+        ["patient"] = new { name = "John Doe", age = 35 },
+        ["doctor"] = new { name = "Dr. Smith" }
+    }
+};
+```
+
+#### Expected Output:
+
+```
+=== EkaCare Transcription Example ===
+
+=== Authentication ===
+✓ Access Token: eyJhbGciOiJSUzI1NiIs...
+✓ Refresh Token: eyJhbGciOiJIUzI1NiIs...
+✓ Expires In: 300 seconds
+✓ Authentication successful
+
+=== Getting Presigned URL ===
+✓ S3 URL: https://s3.amazonaws.com/...
+✓ Transaction ID: txn_123456789
+
+=== Uploading Audio Files ===
+✓ Uploaded: audio1.wav
+  Key: folder/audio1.wav
+  Size: 1,234,567 bytes
+
+=== Initializing Transcription ===
+✓ Status: success
+✓ Batch ID: batch_987654
+
+=== Polling for Transcription Results ===
+Polling... Status: in-progress
+Polling... Status: in-progress
+✓ Transcription completed
+
+=== Transcription Results ===
+Template: transcript_template
+Status: success
+Type: JSON
+
+Decoded Result:
+{
+  "transcript": "Patient complains of headache and fever...",
+  "duration": 45.3,
+  "language": "en-IN"
+}
+
+=== Process Completed Successfully ===
+```
+
+---
+
+### Method 2: EkaCare.WebApi - REST API Service
+
+The Web API provides a RESTful interface for integrating EkaCare transcription into web applications, mobile apps, or other services. It includes Swagger UI for easy testing and a built-in test page.
+
+#### Features:
+- RESTful API endpoints for all SDK operations
+- Swagger UI for API documentation and testing
+- Interactive HTML test page
+- CORS enabled for web integration
+- Supports both configured credentials and runtime credentials
+- Automatic Base64 decoding in responses
+
+#### Setup and Usage:
 
 1. **Navigate to Web API:**
    ```bash
-   cd EkaCare.Solution/EkaCare.WebApi
+   cd EkaCare.WebApi
    ```
 
-2. **Update Configuration:**
+2. **Configure Credentials:**
+   
    Edit `appsettings.json`:
    ```json
    {
+     "Logging": {
+       "LogLevel": {
+         "Default": "Information",
+         "Microsoft.AspNetCore": "Warning"
+       }
+     },
+     "AllowedHosts": "*",
      "EkaCare": {
        "ClientId": "your_actual_client_id",
        "ClientSecret": "your_actual_client_secret"
@@ -165,30 +444,275 @@ var status = await client.Transcription.PollForCompletionAsync(presignedUrl.TxnI
    ```bash
    dotnet run
    ```
-
-4. **Access Swagger UI:**
-   Open browser to: `https://localhost:5001/swagger`
-
-5. **Test with cURL:**
-   ```bash
-   # Authenticate
-   curl -X POST https://localhost:5001/api/transcription/authenticate
    
-   # Get presigned URL
-   curl -X POST https://localhost:5001/api/transcription/presigned-url
+   The API will start on:
+   - HTTP: `http://localhost:5000`
+   - HTTPS: `https://localhost:5001`
+
+4. **Access the Application:**
    
-   # Complete workflow
-   curl -X POST https://localhost:5001/api/transcription/complete-workflow \
-     -H "Content-Type: application/json" \
-     -d '{
-       "filePaths": ["C:\\path\\to\\audio.wav"],
-       "mode": "dictation",
-       "modelType": "pro",
-       "outputFormatTemplate": [
-         {"templateId": "transcript_template"}
-       ]
-     }'
-   ```
+   - **Interactive Test Page**: `http://localhost:5000/` (redirects to test-workflow.html)
+   - **Swagger UI**: `http://localhost:5000/swagger`
+   - **API Endpoints**: `http://localhost:5000/api/transcription/...`
+
+#### Available API Endpoints:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/transcription/authenticate` | Authenticate and get access token |
+| `POST` | `/api/transcription/refresh-token` | Refresh an expired access token |
+| `POST` | `/api/transcription/presigned-url` | Get presigned URL for file upload |
+| `POST` | `/api/transcription/upload` | Upload files using presigned URL |
+| `POST` | `/api/transcription/upload-file` | Upload single file to S3 |
+| `POST` | `/api/transcription/initialize/{txnId}` | Initialize transcription transaction |
+| `POST` | `/api/transcription/status/{txnId}` | Get current transcription status |
+| `GET`  | `/api/transcription/poll/{txnId}` | Poll until transcription completes |
+| `POST` | `/api/transcription/complete-workflow` | Execute complete workflow in one call |
+
+#### API Usage Examples:
+
+**1. Complete Workflow (Recommended for Quick Start):**
+
+This endpoint handles the entire process in one call:
+
+```bash
+curl -X POST http://localhost:5000/api/transcription/complete-workflow \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filePaths": ["/path/to/audio.wav"],
+    "mode": "dictation",
+    "modelType": "pro",
+    "inputLanguage": ["en-IN"],
+    "outputLanguage": "en-IN",
+    "speciality": "general_medicine",
+    "outputFormatTemplate": [
+      {
+        "templateId": "transcript_template",
+        "codificationNeeded": false
+      }
+    ],
+    "maxPollDurationSeconds": 300,
+    "pollIntervalSeconds": 5
+  }'
+```
+
+**Response:**
+```json
+{
+  "message": "Workflow completed successfully",
+  "txnId": "txn_123456789",
+  "uploadResults": [
+    {
+      "fileName": "audio.wav",
+      "key": "folder/audio.wav",
+      "size": 1234567
+    }
+  ],
+  "status": {
+    "data": {
+      "output": [
+        {
+          "templateId": "transcript_template",
+          "status": "success",
+          "type": "JSON",
+          "decodedValue": {
+            "transcript": "Patient complains of..."
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+**2. Step-by-Step Workflow:**
+
+```bash
+# Step 1: Authenticate
+curl -X POST http://localhost:5000/api/transcription/authenticate
+
+# Response: Save the access_token for subsequent requests
+# {
+#   "message": "Authentication successful",
+#   "access_token": "eyJhbGci...",
+#   "refresh_token": "eyJhbGci...",
+#   "expires_in": 300
+# }
+
+# Step 2: Get Presigned URL
+curl -X POST http://localhost:5000/api/transcription/presigned-url
+
+# Response: Save txnId, uploadData.url, and folderPath
+# {
+#   "txnId": "txn_123456",
+#   "folderPath": "/uploads/folder123/",
+#   "uploadData": {
+#     "url": "https://s3.amazonaws.com/bucket",
+#     "fields": {...}
+#   }
+# }
+
+# Step 3: Upload File
+curl -X POST http://localhost:5000/api/transcription/upload-file \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filePath": "/path/to/audio.wav",
+    "txnId": "txn_123456",
+    "uploadUrl": "https://s3.amazonaws.com/bucket",
+    "folderPath": "/uploads/folder123/",
+    "fields": {}
+  }'
+
+# Step 4: Initialize Transcription
+curl -X POST http://localhost:5000/api/transcription/initialize/txn_123456 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "request": {
+      "mode": "dictation",
+      "batchS3Url": "https://s3.amazonaws.com/bucket/uploads/folder123/",
+      "clientGeneratedFiles": ["audio.wav"],
+      "modelType": "pro",
+      "inputLanguage": ["en-IN"],
+      "outputLanguage": "en-IN",
+      "outputFormatTemplate": [
+        {"templateId": "transcript_template"}
+      ]
+    }
+  }'
+
+# Step 5: Poll for Completion
+curl -X GET "http://localhost:5000/api/transcription/poll/txn_123456?maxDurationSeconds=300&pollIntervalSeconds=5"
+```
+
+**3. Using with Custom Credentials:**
+
+You can pass credentials in the request body instead of using configured credentials:
+
+```bash
+curl -X POST http://localhost:5000/api/transcription/authenticate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "clientId": "custom_client_id",
+    "clientSecret": "custom_client_secret"
+  }'
+```
+
+#### Testing with Swagger UI:
+
+1. Open `http://localhost:5000/swagger`
+2. Expand any endpoint (e.g., `/api/transcription/complete-workflow`)
+3. Click "Try it out"
+4. Fill in the request body with your data
+5. Click "Execute"
+6. View the response with decoded results
+
+#### Integration Examples:
+
+**JavaScript/TypeScript (Fetch API):**
+
+```javascript
+async function transcribeAudio(filePath) {
+  const response = await fetch('http://localhost:5000/api/transcription/complete-workflow', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      filePaths: [filePath],
+      mode: 'dictation',
+      modelType: 'pro',
+      outputFormatTemplate: [
+        { templateId: 'transcript_template' }
+      ]
+    })
+  });
+  
+  const result = await response.json();
+  console.log('Transcription:', result.status.data.output[0].decodedValue);
+  return result;
+}
+
+// Usage
+transcribeAudio('/path/to/audio.wav');
+```
+
+**Python (requests):**
+
+```python
+import requests
+
+def transcribe_audio(file_path):
+    url = 'http://localhost:5000/api/transcription/complete-workflow'
+    payload = {
+        'filePaths': [file_path],
+        'mode': 'dictation',
+        'modelType': 'pro',
+        'outputFormatTemplate': [
+            {'templateId': 'transcript_template'}
+        ]
+    }
+    
+    response = requests.post(url, json=payload)
+    result = response.json()
+    
+    print('Transcription:', result['status']['data']['output'][0]['decodedValue'])
+    return result
+
+# Usage
+transcribe_audio('/path/to/audio.wav')
+```
+
+**C# (HttpClient):**
+
+```csharp
+using System.Net.Http;
+using System.Text.Json;
+
+public async Task<string> TranscribeAudio(string filePath)
+{
+    using var client = new HttpClient();
+    var request = new
+    {
+        filePaths = new[] { filePath },
+        mode = "dictation",
+        modelType = "pro",
+        outputFormatTemplate = new[]
+        {
+            new { templateId = "transcript_template" }
+        }
+    };
+    
+    var json = JsonSerializer.Serialize(request);
+    var content = new StringContent(json, Encoding.UTF8, "application/json");
+    
+    var response = await client.PostAsync(
+        "http://localhost:5000/api/transcription/complete-workflow",
+        content);
+    
+    var result = await response.Content.ReadAsStringAsync();
+    return result;
+}
+```
+
+#### Configuration Options:
+
+**Using Environment Variables:**
+
+```bash
+export EkaCare__ClientId="your_client_id"
+export EkaCare__ClientSecret="your_client_secret"
+dotnet run
+```
+
+**Using User Secrets (Development):**
+
+```bash
+dotnet user-secrets set "EkaCare:ClientId" "your_client_id"
+dotnet user-secrets set "EkaCare:ClientSecret" "your_client_secret"
+dotnet run
+```
+
+---
 
 ### Method 3: Visual Studio
 
@@ -517,6 +1041,182 @@ curl -X POST https://localhost:5001/api/transcription/complete-workflow \
   -H "Content-Type: application/json" \
   -d @request.json
 ```
+
+### EkaCare.ConsoleExample Issues
+
+**5. Audio File Not Found**
+```
+Error: File not found: C:\path\to\audio.wav
+```
+**Solution:** 
+- Verify the file path in the `AUDIO_FILE_PATHS` list
+- Use absolute paths
+- On Windows, use `@"C:\path\to\file.wav"` or `"C:\\path\\to\\file.wav"`
+- On macOS/Linux, use `"/Users/username/audio.wav"`
+
+**6. Configuration Not Updated**
+```
+Error: 401 Unauthorized with <client_id>
+```
+**Solution:** Make sure you replaced `<client_id>` and `<client_secret>` in `Program.cs` with your actual credentials.
+
+**7. Compilation Errors**
+```
+Error: The type or namespace name 'EkaCare' could not be found
+```
+**Solution:** 
+- Ensure you're in the correct directory: `cd EkaCare.ConsoleExample`
+- Restore dependencies: `dotnet restore`
+- Check that `EkaCare.SDK` project exists in the solution
+
+### EkaCare.WebApi Issues
+
+**8. Port Already in Use**
+```
+Error: Unable to bind to https://localhost:5001
+```
+**Solution:**
+- Stop other applications using port 5000/5001
+- Or specify a different port:
+  ```bash
+  dotnet run --urls "http://localhost:5500;https://localhost:5501"
+  ```
+
+**9. CORS Errors in Browser**
+```
+Error: Access to fetch blocked by CORS policy
+```
+**Solution:** The API already has CORS enabled. If still seeing errors:
+- Check if you're using HTTPS when the API expects HTTP (or vice versa)
+- Verify the request origin matches your configuration
+- Check browser console for specific CORS error details
+
+**10. Configuration Not Loaded**
+```
+Error: ClientId not configured
+```
+**Solution:**
+- Verify `appsettings.json` has the correct structure
+- Check that `EkaCare:ClientId` and `EkaCare:ClientSecret` are set
+- Alternatively, use environment variables or user secrets
+
+**11. Swagger Not Loading**
+```
+Error: 404 when accessing /swagger
+```
+**Solution:**
+- Ensure you're running in Development mode
+- Try accessing `/swagger/index.html` directly
+- Check that the app started correctly: look for "Now listening on: http://localhost:5000"
+
+**12. File Path Issues in API Requests**
+```
+Error: File not found when calling upload-file endpoint
+```
+**Solution:** 
+- The API server must have access to the file path
+- Use absolute paths
+- Or consider uploading files as `multipart/form-data` and modifying the endpoint to accept file streams
+
+## 📋 Quick Reference
+
+### EkaCare.ConsoleExample Commands
+
+```bash
+# Navigate to project
+cd EkaCare.ConsoleExample
+
+# Edit configuration
+# Update CLIENT_ID, CLIENT_SECRET, and AUDIO_FILE_PATHS in Program.cs
+
+# Run the application
+dotnet run
+
+# Build for release
+dotnet build -c Release
+
+# Publish as self-contained executable
+dotnet publish -c Release -r win-x64 --self-contained
+dotnet publish -c Release -r osx-x64 --self-contained
+dotnet publish -c Release -r linux-x64 --self-contained
+```
+
+### EkaCare.WebApi Commands
+
+```bash
+# Navigate to project
+cd EkaCare.WebApi
+
+# Edit configuration
+# Update appsettings.json with your ClientId and ClientSecret
+
+# Run the API
+dotnet run
+
+# Run with specific ports
+dotnet run --urls "http://localhost:5500;https://localhost:5501"
+
+# Run in production mode
+dotnet run --environment Production
+
+# Build for release
+dotnet build -c Release
+
+# Publish
+dotnet publish -c Release -o ./publish
+```
+
+### Key URLs (when running locally)
+
+| Service | URL | Description |
+|---------|-----|-------------|
+| **Console App** | N/A | Command-line interface |
+| **Web API** | `http://localhost:5000` | Main API endpoint |
+| **Web API (HTTPS)** | `https://localhost:5001` | Secure API endpoint |
+| **Test Page** | `http://localhost:5000/` | Interactive test interface |
+| **Swagger UI** | `http://localhost:5000/swagger` | API documentation |
+| **API Base** | `http://localhost:5000/api/transcription` | REST endpoints |
+
+### Common cURL Commands
+
+```bash
+# Complete workflow (easiest)
+curl -X POST http://localhost:5000/api/transcription/complete-workflow \
+  -H "Content-Type: application/json" \
+  -d '{"filePaths":["/path/to/audio.wav"],"mode":"dictation","modelType":"pro","outputFormatTemplate":[{"templateId":"transcript_template"}]}'
+
+# Authenticate only
+curl -X POST http://localhost:5000/api/transcription/authenticate
+
+# Get presigned URL
+curl -X POST http://localhost:5000/api/transcription/presigned-url
+
+# Check status
+curl -X POST http://localhost:5000/api/transcription/status/txn_123456
+
+# Poll for results
+curl -X GET "http://localhost:5000/api/transcription/poll/txn_123456?maxDurationSeconds=300"
+```
+
+### Environment Variables
+
+```bash
+# Set credentials via environment variables (alternative to config files)
+
+# Windows (PowerShell)
+$env:EkaCare__ClientId="your_client_id"
+$env:EkaCare__ClientSecret="your_client_secret"
+
+# Windows (CMD)
+set EkaCare__ClientId=your_client_id
+set EkaCare__ClientSecret=your_client_secret
+
+# macOS/Linux
+export EkaCare__ClientId="your_client_id"
+export EkaCare__ClientSecret="your_client_secret"
+```
+
+---
 
 ## 📝 License
 
