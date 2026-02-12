@@ -158,6 +158,12 @@ namespace EkaCare.SDK
         [JsonPropertyName("template_id")]
         public string TemplateId { get; set; } = string.Empty;
 
+        [JsonPropertyName("template_type")]
+        public string? TemplateType { get; set; }
+
+        [JsonPropertyName("template_name")]
+        public string? TemplateName { get; set; }
+
         [JsonPropertyName("codification_needed")]
         public bool CodificationNeeded { get; set; } = false;
     }

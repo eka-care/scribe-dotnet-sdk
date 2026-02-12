@@ -394,7 +394,12 @@ namespace EkaCare.WebApi.Controllers
                     Speciality = request.Speciality,
                     OutputFormatTemplate = request.OutputFormatTemplate ?? new List<OutputFormatTemplate>
                     {
-                        new OutputFormatTemplate { TemplateId = "transcript_template" }
+                        new OutputFormatTemplate 
+                        { 
+                            TemplateId = "transcript_template",
+                            TemplateType = "custom",
+                            TemplateName = "Transcript Template"
+                        }
                     }
                 };
 

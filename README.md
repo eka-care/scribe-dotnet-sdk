@@ -115,7 +115,12 @@ var request = new TransactionInitRequest
     ClientGeneratedFiles = results.Select(r => r.FileName).ToList(),
     OutputFormatTemplate = new List<OutputFormatTemplate>
     {
-        new() { TemplateId = "transcript_template" }
+        new() 
+        { 
+            TemplateId = "transcript_template",
+            TemplateType = "custom", // Required: "custom", "default", etc.
+            TemplateName = "Transcript Template" // Optional: descriptive name
+        }
     }
 };
 
@@ -345,6 +350,8 @@ var request = new TransactionInitRequest
         new OutputFormatTemplate
         {
             TemplateId = TEMPLATE_ID,
+            TemplateType = "custom",     // Required: "custom", "default", etc.
+            TemplateName = "My Custom Template", // Optional: descriptive name
             CodificationNeeded = false
         }
     },
@@ -488,6 +495,8 @@ curl -X POST http://localhost:5000/api/transcription/complete-workflow \
     "outputFormatTemplate": [
       {
         "templateId": "transcript_template",
+        "templateType": "custom",
+        "templateName": "Transcript Template",
         "codificationNeeded": false
       }
     ],
@@ -575,7 +584,11 @@ curl -X POST http://localhost:5000/api/transcription/initialize/txn_123456 \
       "inputLanguage": ["en-IN"],
       "outputLanguage": "en-IN",
       "outputFormatTemplate": [
-        {"templateId": "transcript_template"}
+        {
+          "templateId": "transcript_template",
+          "templateType": "custom",
+          "templateName": "Transcript Template"
+        }
       ]
     }
   }'
@@ -622,7 +635,11 @@ async function transcribeAudio(filePath) {
       mode: 'dictation',
       modelType: 'pro',
       outputFormatTemplate: [
-        { templateId: 'transcript_template' }
+        { 
+          templateId: 'transcript_template',
+          templateType: 'custom',
+          templateName: 'Transcript Template'
+        }
       ]
     })
   });
@@ -648,7 +665,11 @@ def transcribe_audio(file_path):
         'mode': 'dictation',
         'modelType': 'pro',
         'outputFormatTemplate': [
-            {'templateId': 'transcript_template'}
+            {
+                'templateId': 'transcript_template',
+                'templateType': 'custom',
+                'templateName': 'Transcript Template'
+            }
         ]
     }
     
@@ -678,7 +699,11 @@ public async Task<string> TranscribeAudio(string filePath)
         modelType = "pro",
         outputFormatTemplate = new[]
         {
-            new { templateId = "transcript_template" }
+            new { 
+                templateId = "transcript_template",
+                templateType = "custom",
+                templateName = "Transcript Template"
+            }
         }
     };
     
@@ -847,7 +872,13 @@ var request = new TransactionInitRequest
     Speciality = "general_medicine",
     OutputFormatTemplate = new List<OutputFormatTemplate>
     {
-        new() { TemplateId = "transcript_template", CodificationNeeded = false }
+        new() 
+        { 
+            TemplateId = "transcript_template",
+            TemplateType = "custom",
+            TemplateName = "Transcript Template",
+            CodificationNeeded = false 
+        }
     }
 };
 
@@ -897,7 +928,12 @@ var request = new TransactionInitRequest
     ClientGeneratedFiles = uploads.Select(u => u.FileName).ToList(),
     OutputFormatTemplate = new()
     {
-        new() { TemplateId = "transcript_template" }
+        new() 
+        { 
+            TemplateId = "transcript_template",
+            TemplateType = "custom",
+            TemplateName = "Transcript Template"
+        }
     }
 };
 
@@ -927,7 +963,12 @@ var request = new TransactionInitRequest
     OutputLanguage = "hi", // Output in Hindi
     OutputFormatTemplate = new()
     {
-        new() { TemplateId = "clinical_notes_template" }
+        new() 
+        { 
+            TemplateId = "clinical_notes_template",
+            TemplateType = "custom",
+            TemplateName = "Clinical Notes Template"
+        }
     }
 };
 ```
@@ -942,7 +983,13 @@ var request = new TransactionInitRequest
     Speciality = "cardiology",
     OutputFormatTemplate = new()
     {
-        new() { TemplateId = "eka_emr_template", CodificationNeeded = true }
+        new() 
+        { 
+            TemplateId = "eka_emr_template",
+            TemplateType = "custom",
+            TemplateName = "EkaCare EMR Template",
+            CodificationNeeded = true 
+        }
     },
     AdditionalData = new Dictionary<string, object>
     {
@@ -955,13 +1002,64 @@ var request = new TransactionInitRequest
 
 ## ⚙️ Configuration
 
-### Supported Templates
+### Output Format Templates
 
-| Template ID | Description |
-|------------|-------------|
-| `transcript_template` | Basic transcription |
-| `clinical_notes_template` | Structured clinical notes |
-| `eka_emr_template` | EMR-compatible format |
+Templates define how transcription results are structured and formatted. Each template requires three properties:
+
+#### Template Properties
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `template_id` | string | ✅ Yes | Unique identifier for the template |
+| `template_type` | string | ✅ Yes | Type of template: `custom`, `default`, `emr`, etc. |
+| `template_name` | string | ⚠️ Optional | Human-readable name for the template |
+| `codification_needed` | boolean | ⚠️ Optional | Whether to include medical coding (default: false) |
+
+#### Example Template Configuration
+
+```csharp
+OutputFormatTemplate = new List<OutputFormatTemplate>
+{
+    new OutputFormatTemplate
+    {
+        TemplateId = "ea016f6b-9bce-4d75-9f32-576ad20b4b19",
+        TemplateType = "custom",  // Required
+        TemplateName = "Live Gracious Template", // Optional but recommended
+        CodificationNeeded = false
+    }
+}
+```
+
+```json
+{
+  "output_format_template": [
+    {
+      "template_id": "ea016f6b-9bce-4d75-9f32-576ad20b4b19",
+      "template_type": "custom",
+      "template_name": "Live Gracious Template"
+    }
+  ]
+}
+```
+
+#### Common Template IDs
+
+| Template ID | Template Type | Description |
+|------------|---------------|-------------|
+| `transcript_template` | `custom` | Basic transcription with timestamps |
+| `clinical_notes_template` | `custom` | Structured clinical notes (SOAP format) |
+| `eka_emr_template` | `custom` | EMR-compatible format with ICD codes |
+| Your custom template ID | `custom` | Your organization's custom template |
+
+#### Template Types
+
+| Type | Description | Use Case |
+|------|-------------|----------|
+| `custom` | User-defined custom templates | Organization-specific formats, custom layouts |
+| `default` | Standard EkaCare templates | Basic transcription, general use |
+| `emr` | EMR integration templates | Electronic Medical Record systems |
+
+**Note:** Always specify the `template_type` when configuring templates. The API requires this field to properly process your transcription request.
 
 ### Supported Languages
 
@@ -1011,6 +1109,23 @@ Error: Polling timeout after 300 seconds
 Error: The command could not be loaded
 ```
 **Solution:** Install .NET 8.0 SDK from https://dotnet.microsoft.com/download
+
+**5. Template Type Missing Error**
+```
+Error: 400 Bad Request - template_type is required
+```
+**Solution:** Ensure all `OutputFormatTemplate` objects include the `template_type` field:
+```csharp
+OutputFormatTemplate = new List<OutputFormatTemplate>
+{
+    new() 
+    { 
+        TemplateId = "your_template_id",
+        TemplateType = "custom",  // Required!
+        TemplateName = "Your Template Name"
+    }
+}
+```
 
 ### Debug Mode
 
@@ -1183,7 +1298,7 @@ dotnet publish -c Release -o ./publish
 # Complete workflow (easiest)
 curl -X POST http://localhost:5000/api/transcription/complete-workflow \
   -H "Content-Type: application/json" \
-  -d '{"filePaths":["/path/to/audio.wav"],"mode":"dictation","modelType":"pro","outputFormatTemplate":[{"templateId":"transcript_template"}]}'
+  -d '{"filePaths":["/path/to/audio.wav"],"mode":"dictation","modelType":"pro","outputFormatTemplate":[{"templateId":"transcript_template","templateType":"custom","templateName":"Transcript Template"}]}'
 
 # Authenticate only
 curl -X POST http://localhost:5000/api/transcription/authenticate

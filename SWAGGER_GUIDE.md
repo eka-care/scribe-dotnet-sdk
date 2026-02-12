@@ -107,6 +107,8 @@ curl -X POST "https://m-prod-ekascribe-batch.s3.amazonaws.com/" \
   "output_format_template": [
     {
       "template_id": "transcript_template",
+      "template_type": "custom",
+      "template_name": "Transcript Template",
       "codification_needed": false
     }
   ],
@@ -183,6 +185,8 @@ This endpoint does everything in one call (except S3 upload):
   "outputFormatTemplate": [
     {
       "templateId": "transcript_template",
+      "templateType": "custom",
+      "templateName": "Transcript Template",
       "codificationNeeded": false
     }
   ],

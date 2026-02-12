@@ -132,6 +132,8 @@ namespace EkaCare.ConsoleExample
                     new OutputFormatTemplate
                     {
                         TemplateId = TEMPLATE_ID,
+                        TemplateType = "custom", // or "default", "emr", etc.
+                        TemplateName = "Transcript Template", // Optional: descriptive name
                         CodificationNeeded = false
                     }
                 },

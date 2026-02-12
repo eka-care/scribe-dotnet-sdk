@@ -112,7 +112,15 @@ var request = new TransactionInitRequest
     Mode = "dictation",
     BatchS3Url = presignedUrl.UploadData.Url + presignedUrl.FolderPath,
     ClientGeneratedFiles = uploads.Select(u => u.FileName).ToList(),
-    OutputFormatTemplate = new() { new() { TemplateId = "transcript_template" } }
+    OutputFormatTemplate = new() 
+    { 
+        new() 
+        { 
+            TemplateId = "transcript_template",
+            TemplateType = "custom",
+            TemplateName = "Transcript Template"
+        } 
+    }
 };
 
 await client.Transcription.InitializeTransactionAsync(presignedUrl.TxnId, request);
@@ -142,7 +150,12 @@ var request = new TransactionInitRequest
     OutputLanguage = "hi",
     OutputFormatTemplate = new()
     {
-        new() { TemplateId = "clinical_notes_template" }
+        new() 
+        { 
+            TemplateId = "clinical_notes_template",
+            TemplateType = "custom",
+            TemplateName = "Clinical Notes Template"
+        }
     }
 };
 ```
